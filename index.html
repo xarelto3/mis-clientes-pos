@@ -1,12 +1,200 @@
 <!DOCTYPE html>
 <html lang="es">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Mis Clientes POS</title>
-  </head>
-  <body>
-    <div id="root"></div>
-    <script type="module" src="/src/main.jsx"></script>
-  </body>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mis Clientes POS</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Segoe UI',sans-serif;background:#0f0f1a;color:#fff;min-height:100vh}
+.center{display:flex;align-items:center;justify-content:center;min-height:100vh;padding:20px}
+.lbox{background:#1a1f2e;border-radius:16px;padding:32px;width:100%;max-width:320px;text-align:center;border:2px solid #d4a017}
+.lbox h2{color:#d4a017;font-size:20px;margin:12px 0 4px;font-weight:800}
+.lbox p{color:#6b7280;font-size:12px;margin-bottom:20px}
+input,select{width:100%;padding:10px 12px;border-radius:8px;border:1px solid #374151;background:#111827;color:#fff;font-size:14px;margin-bottom:8px;box-sizing:border-box}
+.btn{width:100%;padding:11px;border-radius:8px;border:none;font-size:14px;font-weight:700;cursor:pointer}
+.bg{background:#d4a017;color:#111}
+.bgr{background:#16a34a;color:#fff}
+.brd{background:#dc2626;color:#fff}
+.bgr2{background:#374151;color:#fff}
+.bbl{background:#2563eb;color:#fff}
+.bsm{padding:7px 14px;font-size:12px;border-radius:8px;border:none;font-weight:700;cursor:pointer}
+.err{color:#ef4444;font-size:12px;margin-bottom:8px}
+.wrap{max-width:600px;margin:0 auto;padding:20px 16px}
+.hdr{display:flex;justify-content:space-between;align-items:center;margin-bottom:20px}
+.hdr h1{color:#d4a017;font-size:20px;font-weight:800}
+.cc{background:#1a1a2e;border-radius:12px;padding:16px;margin-bottom:12px;border:1px solid #1e2d44}
+.cc.act{border-color:rgba(22,163,74,.4)}
+.cc.ina{border-color:rgba(220,38,38,.4)}
+.ct{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:10px}
+.ci h3{font-size:15px;font-weight:700;margin-bottom:3px}
+.ci p{color:#9ca3af;font-size:12px;margin-bottom:2px}
+.ci a{color:#60a5fa;font-size:11px;text-decoration:none}
+.sb{padding:4px 12px;border-radius:20px;font-size:11px;font-weight:700}
+.sg{background:#16a34a;color:#fff}
+.sr{background:#dc2626;color:#fff}
+.dias{font-size:12px;font-weight:600;margin-top:5px}
+.dok{color:#d4a017}.dwa{color:#ef4444}
+.cbtns{display:flex;gap:8px;margin-top:10px}
+.fbox{background:#1a1a2e;border-radius:12px;padding:16px;border:1px solid #2563eb;margin-top:8px}
+.fbox h3{color:#60a5fa;font-weight:700;margin-bottom:12px}
+.fr{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.fbtns{display:flex;gap:8px;margin-top:8px}
+.spin{display:inline-block;width:22px;height:22px;border:3px solid #374151;border-top-color:#d4a017;border-radius:50%;animation:sp .8s linear infinite}
+@keyframes sp{to{transform:rotate(360deg)}}
+#toast{position:fixed;bottom:20px;right:20px;padding:12px 20px;border-radius:10px;font-size:13px;font-weight:600;transform:translateY(80px);opacity:0;transition:all .25s;z-index:999}
+#toast.show{transform:translateY(0);opacity:1}
+#toast.ok{background:#16a34a;color:#fff}
+#toast.er{background:#dc2626;color:#fff}
+</style>
+</head>
+<body>
+<div id="toast"></div>
+
+<div id="lv" class="center">
+  <div class="lbox">
+    <div style="font-size:44px;margin-bottom:8px">&#128274;</div>
+    <h2>Panel de Clientes</h2>
+    <p>Solo para el administrador maestro</p>
+    <input type="password" id="ci" placeholder="Clave maestra" onkeydown="if(event.key==='Enter')ver()">
+    <div id="le" class="err" style="display:none">Clave incorrecta</div>
+    <button class="btn bg" onclick="ver()">Entrar</button>
+  </div>
+</div>
+
+<div id="mv" style="display:none">
+  <div class="wrap">
+    <div class="hdr">
+      <h1>&#127978; Mis Clientes</h1>
+      <button class="bsm bgr2" onclick="sal()">Salir</button>
+    </div>
+    <div id="cl"><div style="text-align:center;padding:30px"><div class="spin"></div></div></div>
+    <div id="fb" style="display:none" class="fbox">
+      <h3>+ Nuevo Cliente</h3>
+      <input type="text" id="fn" placeholder="Nombre del local *">
+      <div class="fr">
+        <input type="text" id="fd" placeholder="Direccion">
+        <input type="text" id="fa" placeholder="Administrador">
+      </div>
+      <div class="fr">
+        <input type="text" id="fw" placeholder="+56950690075">
+        <input type="text" id="fu" placeholder="pos-xxx.vercel.app">
+      </div>
+      <input type="date" id="fv">
+      <div class="fbtns">
+        <button class="bsm bgr" onclick="agregar()">&#10003; Guardar</button>
+        <button class="bsm bgr2" onclick="document.getElementById('fb').style.display='none'">Cancelar</button>
+      </div>
+    </div>
+    <button class="btn bbl" style="margin-top:8px" onclick="document.getElementById('fb').style.display='block'">+ Agregar nuevo cliente</button>
+  </div>
+</div>
+
+<script>
+const BID='69f90a83aaba8821976f5708';
+const MK='$2a$10$BpgOewHdBdSi3plHL7Gb4.ZX.UNobsB47QhO9hk6GAr55UZVh6Npe';
+const BURL='https://api.jsonbin.io/v3/b/'+BID;
+const HDR={'Content-Type':'application/json','X-Master-Key':MK,'X-Bin-Versioning':'false'};
+const CM='JUAN2024';
+let CL=[];
+
+function ver(){
+  if(document.getElementById('ci').value===CM){
+    document.getElementById('lv').style.display='none';
+    document.getElementById('mv').style.display='block';
+    cargar();
+  }else{
+    document.getElementById('le').style.display='block';
+  }
+}
+
+function sal(){
+  document.getElementById('mv').style.display='none';
+  document.getElementById('lv').style.display='flex';
+  document.getElementById('ci').value='';
+}
+
+async function cargar(){
+  try{
+    const r=await fetch(BURL+'/latest',{headers:{'X-Master-Key':MK}});
+    const d=await r.json();
+    CL=d.record.clientes||[];
+    render();
+  }catch(e){
+    // Bin vacio - inicializar con Luchin
+    CL=[{id:'luchin',nombre:'Almacen Luchin',direccion:'Av. Esmeralda 3000, El Tabo',admin:'Nicol',whatsapp:'+56950690075',url:'pos-almacen-luchin.vercel.app',vencimiento:'2026-06-04',activo:true}];
+    await guardar();
+    render();
+    toast('Sistema inicializado con Luchin','ok');
+  }
+}
+
+async function guardar(){
+  await fetch(BURL,{method:'PUT',headers:HDR,body:JSON.stringify({clientes:CL})});
+}
+
+function dias(f){
+  if(!f)return null;
+  return Math.ceil((new Date(f)-new Date())/(1000*60*60*24));
+}
+
+function render(){
+  const el=document.getElementById('cl');
+  if(!CL.length){el.innerHTML='<p style="color:#6b7280;text-align:center;padding:20px">Sin clientes aun</p>';return;}
+  el.innerHTML=CL.map((c,i)=>{
+    const d=dias(c.vencimiento);
+    return `<div class="cc ${c.activo?'act':'ina'}">
+      <div class="ct">
+        <div class="ci">
+          <h3>${c.nombre}</h3>
+          <p>${c.direccion||''}</p>
+          <p>Admin: ${c.admin||''}</p>
+          <p>&#128241; ${c.whatsapp||''}</p>
+          ${c.url?`<a href="https://${c.url}" target="_blank">&#128279; ${c.url}</a>`:''}
+          ${d!==null?`<p class="dias ${d<=7?'dwa':'dok'}">${d>0?'&#9203; Vence en '+d+' dias':'&#9888;&#65039; Vencio hace '+Math.abs(d)+' dias'}</p>`:''}
+        </div>
+        <span class="sb ${c.activo?'sg':'sr'}">${c.activo?'ACTIVO':'INACTIVO'}</span>
+      </div>
+      <div class="cbtns">
+        <button class="bsm ${c.activo?'brd':'bgr'}" onclick="toggle(${i})">${c.activo?'&#9646;&#9646; Desactivar':'&#9654; Activar'}</button>
+        <button class="bsm bgr2" onclick="del(${i})">&#128465;&#65039;</button>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+async function toggle(i){
+  CL[i].activo=!CL[i].activo;
+  await guardar();
+  render();
+  toast(CL[i].activo?'&#9989; Activado':'&#128274; Desactivado','ok');
+}
+
+async function del(i){
+  if(!confirm('&#191;Eliminar '+CL[i].nombre+'?'))return;
+  CL.splice(i,1);
+  await guardar();
+  render();
+  toast('Cliente eliminado','ok');
+}
+
+async function agregar(){
+  const n=document.getElementById('fn').value.trim();
+  if(!n){toast('El nombre es obligatorio','er');return;}
+  CL.push({id:Date.now().toString(),nombre:n,direccion:document.getElementById('fd').value,admin:document.getElementById('fa').value,whatsapp:document.getElementById('fw').value,url:document.getElementById('fu').value,vencimiento:document.getElementById('fv').value,activo:true});
+  await guardar();
+  render();
+  document.getElementById('fb').style.display='none';
+  ['fn','fd','fa','fw','fu','fv'].forEach(id=>document.getElementById(id).value='');
+  toast('&#9989; Cliente agregado','ok');
+}
+
+let tt;
+function toast(msg,type){
+  const t=document.getElementById('toast');
+  t.innerHTML=msg;t.className='toast show '+(type==='er'?'er':'ok');
+  clearTimeout(tt);tt=setTimeout(()=>t.className='toast',3000);
+}
+</script>
+</body>
 </html>
